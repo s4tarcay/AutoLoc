@@ -30,7 +30,7 @@
 
 /* Estilo quando o input está focado */
 .registro-container input:focus {
-    border-color: #007bff; /* Cor ao focar no input */
+    border-color: #000000; /* Cor ao focar no input */
     outline: none; /* Remove o outline padrão */
 }
 
@@ -38,7 +38,7 @@
 .registro-container button {
     width: 100%;
     padding: 10px;
-    background-color: #007bff; /* Cor de fundo do botão */
+    background-color: #000000; /* Cor de fundo do botão */
     color: white; /* Cor do texto do botão */
     border: none;
     cursor: pointer;
@@ -48,7 +48,7 @@
 
 /* Estilo do botão ao passar o mouse */
 .registro-container button:hover {
-    background-color: #0056b3; /* Cor ao passar o mouse */
+    background-color: #343434; /* Cor ao passar o mouse */
 }
 
 /* Link para voltar ao login */

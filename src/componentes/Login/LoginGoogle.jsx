@@ -3,7 +3,6 @@ import { auth, provider, signInWithPopup } from "./firebase"; // Importa o Fireb
 import "./Login.css";
 import google from "../../assets/google.svg";
 import { useNavigate, Link } from "react-router-dom"; // Importa Link para redirecionar
-import Registro from "../Registro/Registro";
 
 const LoginGoogle = () => {
   const navigate = useNavigate();
@@ -64,12 +63,12 @@ const LoginGoogle = () => {
           />
         </div>
         {error && <p style={{ color: "red" }}>{error}</p>} {/* Exibe erro se houver */}
-        
+
         <p className="register">
           Não possui uma conta?{" "}
-          <Link to="/registro">Cadastrar-se</Link> {Registro}
+          <Link to="/registro">Cadastrar-se</Link> {/* Redireciona para Registro */}
         </p>
-        
+
         <button type="submit">Entrar</button>
       </form>
 
