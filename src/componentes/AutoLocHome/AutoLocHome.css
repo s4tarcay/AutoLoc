@@ -1,0 +1,117 @@
+/* Ajusta o estilo do botão */
+.filter-button {
+    background-color: #4f46e5; /* Azul específico */
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.filter-button:hover {
+    background-color: #3730a3; /* Hover mais escuro */
+}
+
+/* Ajusta o estilo dos selects */
+select {
+    background-color: white;
+    color: black;
+    border: 1px solid #d1d5db;
+    padding: 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+select:hover {
+    background-color: #f3f4f6;
+}
+
+/* Estilo da navbar */
+.navbar {
+    background-color: black;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar a {
+    color: white;
+    margin-right: 20px;
+    text-decoration: none;
+    padding: 10px 15px;
+    font-weight: 500;
+    background-color: transparent;
+    border-radius: 5px;
+}
+
+.navbar a:hover {
+    background-color: #4f46e5; /* Cor de hover para botões de navegação */
+    color: white;
+}
+
+/* Ajusta tamanho e espaçamento dos botões */
+button {
+    padding: 10px 15px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 5px;
+    background-color: #4f46e5; /* Azul */
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #3730a3; /* Azul escuro no hover */
+}
+
+/* Ajustes de layout */
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.sidebar {
+    flex-basis: 25%;
+}
+
+.content {
+    flex-basis: 70%;
+}
+
+/* Grid dos cards de pátios */
+.lot-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.lot-card {
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #f9fafb;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.lot-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .lot-grid {
+        grid-template-columns: 1fr; /* 1 coluna em telas pequenas */
+    }
+
+    .sidebar {
+        flex-basis: 100%;
+    }
+
+    .content {
+        flex-basis: 100%;
+    }
+}
