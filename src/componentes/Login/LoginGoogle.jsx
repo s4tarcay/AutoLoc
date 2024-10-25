@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { auth, provider, signInWithPopup } from "./firebase"; // Importa o Firebase
 import "./Login.css";
 import google from "../../assets/google.svg";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom"; // Importa Link para redirecionar
+import Registro from "../Registro/Registro";
 
 const LoginGoogle = () => {
   const navigate = useNavigate();
@@ -23,24 +24,22 @@ const LoginGoogle = () => {
       });
   };
 
-  // Função para autenticar com email e senha
-  const handleEmailLogin = (e) => {
-    e.preventDefault(); // Impede o comportamento padrão do formulário
-    auth.signInWithEmailAndPassword(email, password)
-      .then((userCredential) => {
-        // Login bem-sucedido
-        console.log(userCredential.user);
-        navigate("/"); // Redireciona para AutoLocHome após login
-      })
-      .catch((error) => {
-        setError(error.message);
-        console.error(error);
-      });
+  // Função para fazer login com email e senha
+  const handleEmailLogin = async (e) => {
+    e.preventDefault();
+    try {
+      await auth.signInWithEmailAndPassword(email, password);
+      navigate("/"); // Redireciona para AutoLocHome após login
+    } catch (error) {
+      setError("Erro ao fazer login. Verifique suas credenciais.");
+      console.error(error);
+    }
   };
 
   return (
     <div className="login-container">
       <h2>Login</h2>
+
       <form onSubmit={handleEmailLogin}>
         <div>
           <label htmlFor="email">E-mail:</label>
@@ -50,6 +49,7 @@ const LoginGoogle = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            style={{ border: "1px solid black", borderRadius: "5px" }} // Caixa branca com borda preta
           />
         </div>
         <div>
@@ -60,12 +60,21 @@ const LoginGoogle = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            style={{ border: "1px solid black", borderRadius: "5px" }} // Caixa branca com borda preta
           />
         </div>
         {error && <p style={{ color: "red" }}>{error}</p>} {/* Exibe erro se houver */}
-        <button type="submit">Entrar com E-mail e Senha</button>
+        
+        <p className="register">
+          Não possui uma conta?{" "}
+          <Link to="/registro">Cadastrar-se</Link> {Registro}
+        </p>
+        
+        <button type="submit">Entrar</button>
       </form>
+
       <hr />
+
       <button className="google" onClick={handleGoogleLogin}>
         <img
           src={google}

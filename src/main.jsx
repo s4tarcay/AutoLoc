@@ -3,12 +3,12 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import App from './App';
-import AutoLocHome from './componentes/AutoLocHome/AutoLocHome'; // Verifique o caminho
-import Veiculos from './componentes/Veiculos/Veiculos'; // Importe o seu componente Veículos
-import Localizacao from './componentes/Localizacao/Localizacao'; // Importe o seu componente Localização
-import Login from './componentes/Login/Login'; // Importe o seu componente Login
-import './index.css';
+import AutoLocHome from './componentes/AutoLocHome/AutoLocHome';
+import Veiculos from './componentes/Veiculos/Veiculos';
+import Localizacao from './componentes/Localizacao/Localizacao';
 import LoginGoogle from './componentes/Login/LoginGoogle';
+import Registro from './componentes/Registro/Registro'; // Importe o componente Registro
+import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -18,7 +18,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <Route index element={<AutoLocHome />} />
           <Route path="veiculos" element={<Veiculos />} />
           <Route path="localizacao" element={<Localizacao />} />
-          <Route path="login" element={<LoginGoogle />} /> {/* Adicione esta rota */}
+          <Route path="login" element={<LoginGoogle />} />
+          <Route path="registro" element={<Registro />} /> {/* Rota para Registro */}
         </Route>
       </Routes>
     </Router>
