@@ -1,0 +1,7 @@
+.navbar a {
+    transition: color 0.3s;
+}
+
+.navbar a:hover {
+    color: #34D399; /* Emerald-500 */
+}
