@@ -19,4 +19,4 @@ AutoLoc é uma aplicação web que permite gerenciar pátios e veículos, facili
 
 1. Clone o repositório:
    ```bash
-   git clone https://github.com/seu-usuario/AutoLoc.git
+   https://github.com/s4tarcay/AutoLoc
