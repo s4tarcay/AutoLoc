@@ -1,10 +1,12 @@
-// App.jsx
 import React from 'react';
-import AutoLocHome from './componentes//AutoLocHome/AutoLocHome'; 
+import Header from './componentes/Header/Header'; // Importe o Header
+import { Outlet } from 'react-router-dom'; // Para renderizar o conteúdo das rotas
+
 const App = () => {
   return (
-    <div>
-      <AutoLocHome />
+    <div style={{ paddingTop: '56px' }}> {/* Ajuste conforme necessário */}
+      <Header /> 
+      <Outlet />
     </div>
   );
 };

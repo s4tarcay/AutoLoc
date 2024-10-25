@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
-import { Car } from 'lucide-react';
+import Header from '../Header/Header'; // Verifique o caminho
 import './AutoLocHome.css';
 
 const AutoLocHome = () => {
     const [statusFilter, setStatusFilter] = useState('Todos');
     const [regionFilter, setRegionFilter] = useState('Todos');
 
-    // Opções para os filtros
     const statusOptions = [
         { value: 'Todos', label: 'Todos' },
         { value: 'normal', label: 'Disponibilidade Normal' },
@@ -23,46 +22,20 @@ const AutoLocHome = () => {
     ];
 
     const lots = [
-        {
-            name: "Pátio Centro",
-            total: 30,
-            available: 23,
-            rented: 7,
-            status: "normal",
-            region: "centro"
-        },
-        {
-            name: "Pátio Zona Sul",
-            total: 22,
-            available: 14,
-            rented: 8,
-            status: "medium",
-            region: "sul"
-        },
-        {
-            name: "Pátio Zona Norte",
-            total: 40,
-            available: 3,
-            rented: 37,
-            status: "low",
-            region: "norte"
-        }
+        { name: "Pátio Centro", total: 30, available: 23, rented: 7, status: "normal", region: "centro" },
+        { name: "Pátio Zona Sul", total: 22, available: 14, rented: 8, status: "medium", region: "sul" },
+        { name: "Pátio Zona Norte", total: 40, available: 3, rented: 37, status: "low", region: "norte" }
     ];
 
     const getStatusColor = (status) => {
         switch (status) {
-            case "normal":
-                return "bg-green-200";
-            case "medium":
-                return "bg-yellow-200";
-            case "low":
-                return "bg-red-200";
-            default:
-                return "bg-gray-200";
+            case "normal": return "bg-green-200";
+            case "medium": return "bg-yellow-200";
+            case "low": return "bg-red-200";
+            default: return "bg-gray-200";
         }
     };
 
-    // Filtra os pátios baseado nos filtros selecionados
     const filteredLots = lots.filter(lot => {
         const matchesStatus = statusFilter === 'Todos' || lot.status === statusFilter;
         const matchesRegion = regionFilter === 'Todos' || lot.region === regionFilter;
@@ -71,29 +44,8 @@ const AutoLocHome = () => {
 
     return (
         <div className="min-h-screen bg-gray-100">
-            {/* Navbar */}
-            <nav className="bg-black text-white p-4">
-                <div className="container mx-auto flex justify-between items-center">
-                    <div className="flex items-center space-x-6">
-                        <div className="flex items-center">
-                            <Car className="w-6 h-6 mr-2" />
-                            <span className="text-lg font-semibold">AutoLoc</span>
-                        </div>
-                        <div className="flex space-x-4">
-                            <button className="hover:text-gray-300">Pátios</button>
-                            <button className="hover:text-gray-300">Veículos</button>
-                            <button className="hover:text-gray-300">Localização</button>
-                        </div>
-                    </div>
-                    <button className="px-4 py-1 rounded border border-white hover:bg-white hover:text-black transition-colors">
-                        Login
-                    </button>
-                </div>
-            </nav>
-
-            {/* Main Content */}
+            <Header /> {/* Certifique-se de que o Header está incluído */}
             <div className="container mx-auto p-8 flex">
-                {/* Sidebar Filters */}
                 <div className="w-64 mr-8">
                     <div className="bg-white rounded-lg p-4 mb-4 shadow-sm">
                         <h3 className="font-semibold mb-4">Filtros</h3>
@@ -151,7 +103,6 @@ const AutoLocHome = () => {
                     </div>
                 </div>
 
-                {/* Main Content Area */}
                 <div className="flex-1">
                     <h2 className="text-2xl font-semibold mb-6">Pátios Disponíveis</h2>
                     <div className="grid grid-cols-2 gap-6">
