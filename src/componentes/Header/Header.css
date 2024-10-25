@@ -1,7 +1,13 @@
-.navbar a {
-    transition: color 0.3s;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+.container {
+  max-width: 1400px;
 }
 
-.navbar a:hover {
-    color: #34D399; /* Emerald-500 */
+nav {
+  font-family: 'Inter', sans-serif;
+}
+
+link{
+    color: white;
 }

@@ -58,7 +58,7 @@
     width: 100%;
     padding: 10px;
     background-color: #000000;
-    color: white;
+    color: rgb(255, 255, 255);
     border: none;
     cursor: pointer;
     border-radius: 5px;
@@ -67,3 +67,4 @@
 .login-container button:hover {
     background-color: #4f4f4f;
 }
+

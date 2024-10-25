@@ -21,19 +21,15 @@ const Veiculo = () => {
     const [showModal, setShowModal] = useState(false);
 
     useEffect(() => {
-        fetchPatios();
+        fetchData();
     }, []);
 
-    useEffect(() => {
-        if (patios.length > 0) {
-            fetchVeiculos();
-        }
-    }, [patios]);
-
-    const fetchVeiculos = async () => {
+    const fetchData = async () => {
         try {
-            const response = await axios.get('https://192.168.1.44:7190/api/Veiculos');
-            setVeiculos(response.data);
+            const patiosResponse = await axios.get('https://192.168.1.44:7190/api/Patios');
+            setPatios(patiosResponse.data);
+            const veiculosResponse = await axios.get('https://192.168.1.44:7190/api/Veiculos');
+            setVeiculos(veiculosResponse.data);
         } catch (err) {
             setError(`Erro: ${err.message} | ${err.response ? err.response.data : ''}`);
         } finally {
@@ -41,44 +37,38 @@ const Veiculo = () => {
         }
     };
 
-    const fetchPatios = async () => {
-        try {
-            const response = await axios.get('https://192.168.1.44:7190/api/Patios');
-            setPatios(response.data);
-        } catch (err) {
-            setError(`Erro ao buscar PATIO Ids: ${err.message} | ${err.response ? err.response.data : ''}`);
-        }
-    };
-
     const handleSearch = (e) => {
         setSearchTerm(e.target.value);
     };
 
-    const filteredVeiculos = veiculos.filter(veiculo => {
-        return (
-            veiculo.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            veiculo.id.toString().includes(searchTerm)
-        );
-    });
+    const filteredVeiculos = veiculos.filter(veiculo =>
+        veiculo.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        veiculo.id.toString().includes(searchTerm)
+    );
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handlePostSubmit = async (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        const payload = {
+            modelo: formData.modelo,
+            nome: formData.nome,
+            valorDaDiaria: parseFloat(formData.valorDaDiaria),
+            patioId: formData.patioId
+        };
+
         try {
-            const payload = {
-                modelo: formData.modelo,
-                nome: formData.nome,
-                valorDaDiaria: parseFloat(formData.valorDaDiaria), // Converte para número
-                patioId: formData.patioId
-            };
-            await axios.post('https://192.168.1.44:7190/api/Veiculos', payload);
-            fetchVeiculos();
+            if (isEditing) {
+                await axios.put(`https://192.168.1.44:7190/api/Veiculos/${editingId}`, payload);
+            } else {
+                await axios.post('https://192.168.1.44:7190/api/Veiculos', payload);
+            }
             resetFormData();
             setShowModal(false);
+            fetchData(); // Atualiza a lista de veículos após criar ou editar
         } catch (err) {
             setError(`Erro: ${err.message} | ${err.response ? err.response.data : ''}`);
         }
@@ -88,7 +78,7 @@ const Veiculo = () => {
         setFormData({
             modelo: veiculo.modelo,
             nome: veiculo.nome,
-            valorDaDiaria: veiculo.valorDaDiaria.toString(), // Mantém como string para o input
+            valorDaDiaria: veiculo.valorDaDiaria.toString(),
             patioId: veiculo.patioId
         });
         setEditingId(veiculo.id);
@@ -96,30 +86,10 @@ const Veiculo = () => {
         setShowModal(true);
     };
 
-    const handleUpdateSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            const payload = {
-                id: editingId, // Certifique-se de que o ID está incluído
-                modelo: formData.modelo,
-                nome: formData.nome,
-                valorDaDiaria: parseFloat(formData.valorDaDiaria), // Converte para número
-                patioId: formData.patioId
-            };
-            await axios.put(`https://192.168.1.44:7190/api/Veiculos/${editingId}`, payload);
-            fetchVeiculos();
-            resetFormData();
-            setShowModal(false);
-            setIsEditing(false);
-        } catch (err) {
-            setError(`Erro: ${err.message} | ${err.response ? err.response.data : ''}`);
-        }
-    };
-
     const handleDelete = async (id) => {
         try {
             await axios.delete(`https://192.168.1.44:7190/api/Veiculos/${id}`);
-            fetchVeiculos();
+            fetchData(); // Atualiza a lista de veículos após deletar
         } catch (err) {
             setError(`Erro: ${err.message} | ${err.response ? err.response.data : ''}`);
         }
@@ -133,64 +103,62 @@ const Veiculo = () => {
             patioId: ''
         });
         setEditingId(null);
+        setIsEditing(false);
     };
 
-    if (loading) return <div>Carregando...</div>;
-    if (error) return <div>{error}</div>;
+    if (loading) return <div className="text-center">Carregando...</div>;
+    if (error) return <div className="text-danger text-center">{error}</div>;
 
     return (
-        <div className="min-h-screen bg-gray-100">
-            <div className="container mx-auto p-8 flex flex-col">
-                <h2 className="text-2xl font-semibold mb-6">Veículos Disponíveis</h2>
-                <div className="mb-4">
+        <div className="min-h-screen bg-light">
+            <div className="container p-5">
+                <h2 className="text-center mb-4">Veículos Disponíveis</h2>
+
+                <div className="mb-4 d-flex justify-content-between">
                     <input
                         type="text"
                         placeholder="Buscar Veículo por Nome ou ID"
                         value={searchTerm}
                         onChange={handleSearch}
-                        className="p-2 border rounded mr-4"
+                        className="form-control me-2"
                     />
                     <button
                         onClick={() => { resetFormData(); setShowModal(true); }}
-                        className="mr-4 btn btn-primary"
+                        className="btn btn-primary"
                     >
                         Criar Veículo
                     </button>
                 </div>
-                <div className="flex flex-wrap gap-4">
+
+                <div className="row">
                     {filteredVeiculos.length > 0 ? (
-                        filteredVeiculos.map((veiculo) => (
-                            <div key={veiculo.id} className="rounded-lg p-4 bg-white shadow-sm flex flex-col">
-                                <h3 className="text-lg font-semibold mb-4">{veiculo.nome}</h3>
-                                <div className="text-sm">ID: {veiculo.id}</div>
-                                <div className="grid grid-cols-1 gap-4 text-center flex-grow">
-                                    <div>
-                                        <div className="font-bold text-xl">{veiculo.modelo}</div>
-                                        <div className="text-sm">Modelo</div>
-                                    </div>
-                                    <div>
-                                        <div className="font-bold text-xl">{veiculo.valorDaDiaria}</div>
-                                        <div className="text-sm">Valor da Diária</div>
+                        filteredVeiculos.map((veiculo) => {
+                            // Encontrar o pátio correspondente pelo ID
+                            const patio = patios.find(p => p.id === veiculo.patioId);
+                            return (
+                                <div key={veiculo.id} className="col-md-4 mb-4">
+                                    <div className="card shadow-sm">
+                                        <div className="card-body">
+                                            <h5 className="card-title">{veiculo.nome}</h5>
+                                            <p className="card-text"><strong>ID:</strong> {veiculo.id}</p>
+                                            <p className="card-text"><strong>Modelo:</strong> {veiculo.modelo}</p>
+                                            <p className="card-text"><strong>Valor da Diária:</strong> R$ {veiculo.valorDaDiaria.toFixed(2)}</p>
+                                            <p className="card-text"><strong>Pátio:</strong> {patio ? patio.nome : 'Desconhecido'}</p>
+                                            <div className="d-flex justify-content-between">
+                                                <button onClick={() => handleEdit(veiculo)} className="btn btn-warning">
+                                                    Editar
+                                                </button>
+                                                <button onClick={() => handleDelete(veiculo.id)} className="btn btn-danger">
+                                                    Deletar
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div className="flex justify-between mt-4">
-                                    <button
-                                        onClick={() => handleEdit(veiculo)}
-                                        className="btn btn-warning"
-                                    >
-                                        Editar
-                                    </button>
-                                    <button
-                                        onClick={() => handleDelete(veiculo.id)}
-                                        className="btn btn-danger"
-                                    >
-                                        Deletar
-                                    </button>
-                                </div>
-                            </div>
-                        ))
+                            );
+                        })
                     ) : (
-                        <div className="text-center w-full">Nenhum veículo encontrado.</div>
+                        <div className="text-center w-100">Nenhum veículo encontrado.</div>
                     )}
                 </div>
 
@@ -203,7 +171,7 @@ const Veiculo = () => {
                                 <button type="button" className="btn-close" onClick={() => setShowModal(false)}></button>
                             </div>
                             <div className="modal-body">
-                                <form onSubmit={isEditing ? handleUpdateSubmit : handlePostSubmit}>
+                                <form onSubmit={handleSubmit}>
                                     <div className="mb-3">
                                         <label className="form-label">Modelo</label>
                                         <input
@@ -249,7 +217,7 @@ const Veiculo = () => {
                                             <option value="">Selecione um Pátio</option>
                                             {patios.map((patio) => (
                                                 <option key={patio.id} value={patio.id}>
-                                                    {patio.id} - {patio.nome}
+                                                    {patio.nome}
                                                 </option>
                                             ))}
                                         </select>

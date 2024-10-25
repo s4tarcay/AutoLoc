@@ -1,78 +1,75 @@
-import React, { useState } from 'react';
-import { Car, Menu, X } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 const Header = () => {
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const navigate = useNavigate();
 
-    return (
-        <nav className="bg-slate-900 fixed w-full top-0 z-50 shadow-lg transition-all duration-300">
-            <div className="container mx-auto px-4">
-                <div className="flex justify-between items-center h-20">
-                    {/* Logo e Nome */}
-                    <div className="flex items-center">
-                        <Car className="w-14 h-14 mr-2 text-emerald-500" />
-                        <span className="text-2xl font-bold text-white tracking-tight">
-                            Auto<span className="text-emerald-500">Loc</span>
-                        </span>
-                    </div>
+  const validRoutes = [
+    { path: "/cliente", name: "Cliente" },
+    { path: "/", name: "Home" },
+    { path: "/veiculos", name: "Veículos" },
+    { path: "/patio", name: "Pátio" },
+    { path: "/login", name: "Login" },
+  ];
 
-                    {/* Botão Login */}
-                    <div className="hidden md:flex items-center space-x-4">
-                        <button className="px-6 py-2.5 rounded-md bg-emerald-600 text-white hover:bg-emerald-700 transition-all duration-300 font-semibold text-sm shadow-lg hover:shadow-emerald-500/20">
-                            Login
-                        </button>
-                    </div>
-
-                    {/* Menu Mobile */}
-                    <button 
-                        className="md:hidden text-white hover:text-emerald-500 transition-colors"
-                        onClick={() => setIsMenuOpen(!isMenuOpen)}
-                    >
-                        {isMenuOpen ? 
-                            <X className="w-6 h-6" /> : 
-                            <Menu className="w-6 h-6" />
-                        }
-                    </button>
-                </div>
-            </div>
-
-            {/* Menu Mobile Dropdown */}
-            {isMenuOpen && (
-                <div className="md:hidden bg-slate-800 border-t border-slate-700">
-                    <div className="container mx-auto px-4 py-4 space-y-4">
-                        <Link 
-                            to="/cliente" 
-                            className="block text-gray-300 hover:text-emerald-500 transition-colors duration-300 font-medium text-sm uppercase"
-                        >
-                            Cliente
-                        </Link>
-                        <Link 
-                            to="/" 
-                            className="block text-gray-300 hover:text-emerald-500 transition-colors duration-300 font-medium text-sm uppercase"
-                        >
-                            Locações
-                        </Link>
-                        <Link 
-                            to="/veiculos" 
-                            className="block text-gray-300 hover:text-emerald-500 transition-colors duration-300 font-medium text-sm uppercase"
-                        >
-                            Veículos
-                        </Link>
-                        <Link 
-                            to="/patio" 
-                            className="block text-gray-300 hover:text-emerald-500 transition-colors duration-300 font-medium text-sm uppercase"
-                        >
-                            Pátio
-                        </Link>
-                        <button className="w-full px-6 py-2.5 rounded-md bg-emerald-600 text-white hover:bg-emerald-700 transition-all duration-300 font-semibold text-sm shadow-lg hover:shadow-emerald-500/20">
-                            Login
-                        </button>
-                    </div>
-                </div>
-            )}
-        </nav>
+  const handleSearch = (e) => {
+    e.preventDefault();
+    const normalizedSearchTerm = searchTerm.toLowerCase().trim();
+    const foundRoute = validRoutes.find(
+      (route) =>
+        route.path.toLowerCase().includes(normalizedSearchTerm) ||
+        route.name.toLowerCase().includes(normalizedSearchTerm)
     );
+
+    if (foundRoute) {
+      navigate(foundRoute.path);
+    } else {
+      alert("Rota não encontrada!");
+    }
+  };
+
+  const toggleNavbar = () => {
+    setIsCollapsed(!isCollapsed);
+  };
+
+  return (
+    <nav
+      className="navbar navbar-expand-lg navbar-dark bg-dark"
+      aria-label="Fifth navbar example"
+    >
+      <div className="container-fluid">
+        <Link className="navbar-brand" to="/">
+          AutoLoc
+        </Link>
+        <button
+          className="navbar-toggler"
+          type="button"
+          onClick={toggleNavbar}
+          aria-expanded={!isCollapsed}
+        >
+          <span className="navbar-toggler-icon"></span>
+        </button>
+
+        <div
+          className={`collapse navbar-collapse ${isCollapsed ? "" : "show"}`}
+          id="navbarsExample05"
+        >
+          <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+            {validRoutes.map((route) => (
+              <li className="nav-item" key={route.path}>
+                <Link className="nav-link" to={route.path}>
+                  {route.name}
+                </Link>
+              </li>
+            ))}
+          </ul>
+          <form role="search" className="d-flex" onSubmit={handleSearch}></form>
+        </div>
+      </div>
+    </nav>
+  );
 };
 
 export default Header;

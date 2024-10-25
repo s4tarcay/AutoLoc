@@ -16,6 +16,7 @@ const Cliente = () => {
     });
     const [searchTerm, setSearchTerm] = useState('');
     const [showEditModal, setShowEditModal] = useState(false);
+    const [showCreateModal, setShowCreateModal] = useState(false);
 
     useEffect(() => {
         fetchClientes();
@@ -36,8 +37,8 @@ const Cliente = () => {
         setSearchTerm(e.target.value);
     };
 
-    const filteredClientes = clientes.filter(cliente => 
-        cliente.nome.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    const filteredClientes = clientes.filter(cliente =>
+        cliente.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
         cliente.cpf.includes(searchTerm)
     );
 
@@ -59,33 +60,21 @@ const Cliente = () => {
             await axios.post('https://192.168.1.44:7190/api/Clientes', payload);
             fetchClientes();
             resetFormData();
+            setShowCreateModal(false);
         } catch (err) {
             setError(`Erro: ${err.message} | ${err.response ? err.response.data : ''}`);
         }
     };
 
     const handleEdit = (cliente) => {
-        setFormData({
-            id: cliente.id,
-            nome: cliente.nome,
-            cpf: cliente.cpf,
-            telefone: cliente.telefone,
-            email: cliente.email || ''
-        });
+        setFormData(cliente);
         setShowEditModal(true);
     };
 
     const handleEditSubmit = async (e) => {
         e.preventDefault();
         try {
-            const payload = {
-                id: formData.id, // Passando o ID do cliente
-                nome: formData.nome,
-                cpf: formData.cpf,
-                telefone: formData.telefone,
-                email: formData.email || null
-            };
-            await axios.put(`https://192.168.1.44:7190/api/Clientes/${formData.id}`, payload);
+            await axios.put(`https://192.168.1.44:7190/api/Clientes/${formData.id}`, formData);
             fetchClientes();
             setShowEditModal(false);
             resetFormData();
@@ -113,122 +102,87 @@ const Cliente = () => {
         });
     };
 
-    if (loading) return <div>Carregando...</div>;
-    if (error) return <div>{error}</div>;
+    if (loading) return <div className="text-center">Carregando...</div>;
+    if (error) return <div className="text-danger text-center">{error}</div>;
 
     return (
-        <div className="min-h-screen bg-gray-100">
-            <div className="container mx-auto p-8 flex flex-col">
-                <h2 className="text-2xl font-semibold mb-6">Clientes Disponíveis</h2>
-                <div className="mb-4">
+        <div className="min-h-screen bg-light">
+            <div className="container p-5">
+                <h2 className="text-center mb-4">Clientes Disponíveis</h2>
+                <div className="mb-4 d-flex justify-content-between">
                     <input
                         type="text"
                         placeholder="Buscar Cliente por Nome ou CPF"
                         value={searchTerm}
                         onChange={handleSearch}
-                        className="p-2 border rounded mr-4"
+                        className="form-control me-2"
                     />
                     <button
-                        className="mr-4 btn btn-primary"
-                        data-bs-toggle="modal"
-                        data-bs-target="#createModal"
+                        className="btn btn-primary"
+                        onClick={() => setShowCreateModal(true)}
                     >
                         Criar Cliente
                     </button>
                 </div>
-                <div className="flex flex-wrap gap-4">
+                <div className="row">
                     {filteredClientes.length > 0 ? (
                         filteredClientes.map((cliente) => (
-                            <div key={cliente.id} className="rounded-lg p-4 bg-white shadow-sm flex flex-col">
-                                <h3 className="text-lg font-semibold mb-4">{cliente.nome}</h3>
-                                <div className="text-sm">CPF: {cliente.cpf}</div>
-                                <div className="text-sm">Telefone: {cliente.telefone}</div>
-                                <div className="text-sm">Email: {cliente.email || 'N/A'}</div>
-                                <div className="flex justify-between mt-4">
-                                    <button
-                                        onClick={() => handleEdit(cliente)}
-                                        className="btn btn-warning"
-                                    >
-                                        Editar
-                                    </button>
-                                    <button
-                                        onClick={() => handleDelete(cliente.id)}
-                                        className="btn btn-danger"
-                                    >
-                                        Deletar
-                                    </button>
+                            <div key={cliente.id} className="col-md-4 mb-4">
+                                <div className="card shadow-sm">
+                                    <div className="card-body">
+                                        <h5 className="card-title">{cliente.nome}</h5>
+                                        <p className="card-text"><strong>CPF:</strong> {cliente.cpf}</p>
+                                        <p className="card-text"><strong>Telefone:</strong> {cliente.telefone}</p>
+                                        <p className="card-text"><strong>Email:</strong> {cliente.email || 'N/A'}</p>
+                                        <div className="d-flex justify-content-between">
+                                            <button
+                                                onClick={() => handleEdit(cliente)}
+                                                className="btn btn-warning"
+                                            >
+                                                Editar
+                                            </button>
+                                            <button
+                                                onClick={() => handleDelete(cliente.id)}
+                                                className="btn btn-danger"
+                                            >
+                                                Deletar
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         ))
                     ) : (
-                        <div className="text-center w-full">Nenhum cliente encontrado.</div>
+                        <div className="text-center w-100">Nenhum cliente encontrado.</div>
                     )}
                 </div>
 
                 {/* Modal de Criar Cliente */}
-                <div className="modal fade" id="createModal" tabIndex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
+                <div className={`modal fade ${showCreateModal ? 'show' : ''}`} style={{ display: showCreateModal ? 'block' : 'none' }}>
                     <div className="modal-dialog">
                         <div className="modal-content">
                             <div className="modal-header">
-                                <h5 className="modal-title" id="createModalLabel">Novo Cliente</h5>
-                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                <h5 className="modal-title">Novo Cliente</h5>
+                                <button type="button" className="btn-close" onClick={() => setShowCreateModal(false)}></button>
                             </div>
                             <div className="modal-body">
                                 <form onSubmit={handleCreateSubmit}>
-                                    <div className="mb-3">
-                                        <label className="form-label">Nome</label>
-                                        <input
-                                            type="text"
-                                            name="nome"
-                                            value={formData.nome}
-                                            onChange={handleChange}
-                                            className="form-control"
-                                            required
-                                            minLength={1} // Validação de minLength
-                                        />
-                                    </div>
-                                    <div className="mb-3">
-                                        <label className="form-label">CPF</label>
-                                        <input
-                                            type="text"
-                                            name="cpf"
-                                            value={formData.cpf}
-                                            onChange={handleChange}
-                                            className="form-control"
-                                            required
-                                            pattern="^\d{11}$"
-                                            minLength={11} // Validação de minLength
-                                        />
-                                        <small className="form-text text-muted">Insira 11 dígitos numéricos.</small>
-                                    </div>
-                                    <div className="mb-3">
-                                        <label className="form-label">Telefone</label>
-                                        <input
-                                            type="text"
-                                            name="telefone"
-                                            value={formData.telefone}
-                                            onChange={handleChange}
-                                            className="form-control"
-                                            required
-                                            pattern="^\d{10,11}$"
-                                            minLength={10} // Validação de minLength
-                                        />
-                                        <small className="form-text text-muted">Insira 10 ou 11 dígitos numéricos.</small>
-                                    </div>
-                                    <div className="mb-3">
-                                        <label className="form-label">Email</label>
-                                        <input
-                                            type="email"
-                                            name="email"
-                                            value={formData.email}
-                                            onChange={handleChange}
-                                            className="form-control"
-                                            nullable={true} // Permitir campo de email nulo
-                                        />
-                                    </div>
-                                    <button type="submit" className="btn btn-primary w-100">
-                                        Criar Cliente
-                                    </button>
+                                    {['nome', 'cpf', 'telefone', 'email'].map((field, index) => (
+                                        <div className="mb-3" key={index}>
+                                            <label className="form-label">{field.charAt(0).toUpperCase() + field.slice(1)}</label>
+                                            <input
+                                                type={field === 'email' ? 'email' : 'text'}
+                                                name={field}
+                                                value={formData[field]}
+                                                onChange={handleChange}
+                                                className="form-control"
+                                                required
+                                                pattern={field === 'cpf' ? "^\d{11}$" : field === 'telefone' ? "^\d{10,11}$" : undefined}
+                                            />
+                                            {field !== 'email' && <small className="form-text text-muted">Insira {field === 'cpf' ? '11' : '10 ou 11'} dígitos numéricos.</small>}
+                                        </div>
+                                    ))}
+                                    <button type="submit" className="btn btn-primary w-100">Criar Cliente</button>
                                 </form>
                             </div>
                         </div>
@@ -245,60 +199,22 @@ const Cliente = () => {
                             </div>
                             <div className="modal-body">
                                 <form onSubmit={handleEditSubmit}>
-                                    <div className="mb-3">
-                                        <label className="form-label">Nome</label>
-                                        <input
-                                            type="text"
-                                            name="nome"
-                                            value={formData.nome}
-                                            onChange={handleChange}
-                                            className="form-control"
-                                            required
-                                            minLength={1} // Validação de minLength
-                                        />
-                                    </div>
-                                    <div className="mb-3">
-                                        <label className="form-label">CPF</label>
-                                        <input
-                                            type="text"
-                                            name="cpf"
-                                            value={formData.cpf}
-                                            onChange={handleChange}
-                                            className="form-control"
-                                            required
-                                            pattern="^\d{11}$"
-                                            minLength={11} // Validação de minLength
-                                        />
-                                        <small className="form-text text-muted">Insira 11 dígitos numéricos.</small>
-                                    </div>
-                                    <div className="mb-3">
-                                        <label className="form-label">Telefone</label>
-                                        <input
-                                            type="text"
-                                            name="telefone"
-                                            value={formData.telefone}
-                                            onChange={handleChange}
-                                            className="form-control"
-                                            required
-                                            pattern="^\d{10,11}$"
-                                            minLength={10} // Validação de minLength
-                                        />
-                                        <small className="form-text text-muted">Insira 10 ou 11 dígitos numéricos.</small>
-                                    </div>
-                                    <div className="mb-3">
-                                        <label className="form-label">Email</label>
-                                        <input
-                                            type="email"
-                                            name="email"
-                                            value={formData.email}
-                                            onChange={handleChange}
-                                            className="form-control"
-                                            nullable={true} // Permitir campo de email nulo
-                                        />
-                                    </div>
-                                    <button type="submit" className="btn btn-warning w-100">
-                                        Atualizar Cliente
-                                    </button>
+                                    {['nome', 'cpf', 'telefone', 'email'].map((field, index) => (
+                                        <div className="mb-3" key={index}>
+                                            <label className="form-label">{field.charAt(0).toUpperCase() + field.slice(1)}</label>
+                                            <input
+                                                type={field === 'email' ? 'email' : 'text'}
+                                                name={field}
+                                                value={formData[field]}
+                                                onChange={handleChange}
+                                                className="form-control"
+                                                required
+                                                pattern={field === 'cpf' ? "^\d{11}$" : field === 'telefone' ? "^\d{10,11}$" : undefined}
+                                            />
+                                            {field !== 'email' && <small className="form-text text-muted">Insira {field === 'cpf' ? '11' : '10 ou 11'} dígitos numéricos.</small>}
+                                        </div>
+                                    ))}
+                                    <button type="submit" className="btn btn-warning w-100">Atualizar Cliente</button>
                                 </form>
                             </div>
                         </div>
