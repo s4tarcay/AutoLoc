@@ -1,5 +1,6 @@
 import React from 'react';
 import { Car } from 'lucide-react';
+import { Link } from 'react-router-dom'; // Importe o Link
 
 const Header = () => {
     return (
@@ -11,9 +12,9 @@ const Header = () => {
                         <span className="text-lg font-semibold">AutoLoc</span>
                     </div>
                     <div className="flex space-x-4">
-                        <button className="hover:text-gray-300">Pátios</button>
-                        <button className="hover:text-gray-300">Veículos</button>
-                        <button className="hover:text-gray-300">Localização</button>
+                        <Link to="/" className="hover:text-gray-300">Pátios</Link> {/* Adicione o Link aqui */}
+                        <Link to="/veiculos" className="hover:text-gray-300">Veículos</Link>
+                        <Link to="/localizacao" className="hover:text-gray-300">Localização</Link>
                     </div>
                 </div>
                 <button className="px-4 py-1 rounded border border-white hover:bg-white hover:text-black transition-colors">
