@@ -1,0 +1,37 @@
+.login-button {
+    background-color: black; /* Fundo preto */
+    border: 2px solid white; /* Bordas brancas */
+    border-radius: 20px; /* Bordas arredondadas */
+    padding: 0.5rem 1rem; /* Espaçamento interno */
+    display: flex; /* Flexbox para alinhar ícone e texto */
+    align-items: center; /* Centraliza verticalmente */
+    transition: background-color 0.3s ease; /* Transição suave */
+}
+
+.login-button:hover {
+    background-color: #333; /* Tom mais claro de preto ao passar o mouse */
+}
+
+.login-icon {
+    width: 20px; /* Tamanho do ícone */
+    height: 20px; /* Tamanho do ícone */
+    margin-right: 0.5rem; /* Espaçamento à direita do ícone */
+}
+
+
+.nav-link {
+    color: white; /* Cor padrão dos textos */
+    transition: color 0.3s ease; /* Transição suave para a cor */
+    margin: 0 15px; /* Espaçamento horizontal entre os links */
+}
+
+.nav-link:hover {
+    color: #f0f0f0; /* Cor ao passar o mouse */
+}
+
+.header-container {
+    display: flex;
+    justify-content: center; /* Centraliza os itens */
+    align-items: center; /* Alinha verticalmente no centro */
+    flex-grow: 1; /* Faz com que a div ocupe o espaço restante */
+}
