@@ -5,37 +5,43 @@ import google from "../../assets/google.svg";
 import { useNavigate } from "react-router-dom";
 
 const LoginGoogle = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const navigate = useNavigate();
-  // Função para lidar com o envio do formulário
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    if (email === "user@example.com" && password === "password123") {
-      alert("Login realizado com sucesso!");
-      setError("");
-    } else {
-      setError("Credenciais inválidas!");
-    }
-  };
+
   // Função para autenticar com Google
   const handleGoogleLogin = () => {
     signInWithPopup(auth, provider)
       .then((result) => {
         console.log(result.user); // Informações do usuário autenticado
-        // alert(`Bem-vindo, ${result.user.displayName}!`);
-        navigate("/");
+        navigate("/"); // Redireciona para AutoLocHome após login
       })
       .catch((error) => {
         console.error(error);
-        setError("Erro ao autenticar com Google.");
+        alert("Erro ao autenticar com Google.");
       });
   };
+
+  // Função para autenticar com email e senha
+  const handleEmailLogin = (e) => {
+    e.preventDefault(); // Impede o comportamento padrão do formulário
+    auth.signInWithEmailAndPassword(email, password)
+      .then((userCredential) => {
+        // Login bem-sucedido
+        console.log(userCredential.user);
+        navigate("/"); // Redireciona para AutoLocHome após login
+      })
+      .catch((error) => {
+        setError(error.message);
+        console.error(error);
+      });
+  };
+
   return (
     <div className="login-container">
       <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleEmailLogin}>
         <div>
           <label htmlFor="email">E-mail:</label>
           <input
@@ -56,13 +62,11 @@ const LoginGoogle = () => {
             required
           />
         </div>
-        {error && <p style={{ color: "red" }}>{error}</p>}{" "}
-        {/* Exibe erro se houver */}
-        <button className="m-0" type="submit">Entrar</button>
+        {error && <p style={{ color: "red" }}>{error}</p>} {/* Exibe erro se houver */}
+        <button type="submit">Entrar com E-mail e Senha</button>
       </form>
       <hr />
-      {/* Botão de login com Google */}
-      <button className="google m-0" onClick={handleGoogleLogin}>
+      <button className="google" onClick={handleGoogleLogin}>
         <img
           src={google}
           alt="Login com Google"

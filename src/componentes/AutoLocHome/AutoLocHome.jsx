@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Header from '../Header/Header'; // Verifique o caminho
+
 import './AutoLocHome.css';
 
 const AutoLocHome = () => {
@@ -44,7 +44,7 @@ const AutoLocHome = () => {
 
     return (
         <div className="min-h-screen bg-gray-100">
-            <Header /> {/* Certifique-se de que o Header está incluído */}
+
             <div className="container mx-auto p-8 flex">
                 <div className="w-64 mr-8">
                     <div className="bg-white rounded-lg p-4 mb-4 shadow-sm">
